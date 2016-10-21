@@ -82,7 +82,7 @@ def update(entity):
     if request.method=='PUT':
         world_update=flask_post_json()
         for key in world_update:
-            myWorld.update(entity, key, world_update(key))
+            myWorld.update(entity, key, world_update[key])
     elif request.method == 'POST':
         #  def update(self, entity, key, value):
         myWorld.set(entity, flask_post_json())
