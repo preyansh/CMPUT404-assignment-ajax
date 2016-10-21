@@ -80,7 +80,7 @@ def hello():
 def update(entity):
     '''update the entities via this interface'''
     if request.method=='PUT':
-        world_update=flask_post_json
+        world_update=flask_post_json()
         for key in world_update:
             myWorld.update(entity, key, world_update(key))
     elif request.method == 'POST':
