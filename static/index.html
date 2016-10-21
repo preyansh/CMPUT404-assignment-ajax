@@ -21,6 +21,8 @@
         limitations under the License.
     "/>
     <script src="json2.js"></script>
+    <!-- Jquery hotlink taken from Google https://developers.google.com/speed/libraries/#jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   </head> 
   <body bgcolor="black" height="100%" width="100%"> 
     <canvas id="c" width="100%" height="100%" style="-webkit-tap-highlight-color: transparent;"></canvas> 
@@ -40,6 +42,10 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
                 if (xhr.status==200) {
                     //XXX: parse some JSON from the request!
                     //XXX: Pass the data to the callback!
+                    console.log("readyState==4 data " + url + " obj: " + objects);
+                    // an xhr method for parsing some json ?
+                    // and put data into callback
+                    callback(JSON.parse(xhr.responseText));
                 }
             } 
             catch(e) {
@@ -48,8 +54,11 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
         }
     };
     //XXX: POST to a URL
+    xhr.open('POST', url);
     //XXX: set the mimetype and the accept headers!
     // Remember to use application/json !
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.send(JSON.stringify(objects));
 }
 
 
@@ -135,10 +144,20 @@ function getPosition(e) {
 
 
 function addEntity(entity, data) {
+    // Until receive serverside update, show clients input for illusion of responsiveness.
     world[entity] = data;
-    drawNextFrame(); // (but should we?)
-    //XXX: Send a XHTML Request that updates the entity you just  modified!
-
+    //XXX: Send a XHTML Request that updates the entity you just modified!
+    
+    console.log("hosting host var " + host);
+	console.log("entity:" + entity);
+	console.log("data:" + JSON.stringify(data));
+    
+    // Receive the world from server.
+    sendJSONXMLHTTPRequest('http://'+host, data, function(receivedWorld) {
+        world = receivedWorld;
+    });
+    
+    drawNextFrame(); // (but should we? Perhaps only after we got world)
 }
 
 var counter = 0;
@@ -262,6 +281,20 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 
 function update() {
     //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
+    /*
+    $.getJSON('http://'+host, function(data) {
+        //DO SOMETHING? Data should be world or coordinates or new items.
+        world = data.message;
+        drawNextFrame();
+    });
+    */
+    sendJSONXMLHTTPRequest('http://'+host, null, function(receivedWorld) {
+        // No change means no need to update.
+        if( world !== receivedWorld ) {
+            world = receivedWorld;
+            drawNextFrame();   
+        }
+    });
     drawFrame();
 }
 
