@@ -1,19 +1,19 @@
 <!DOCTYPE HTML>
-<html> 
-  <head> 
-    <title>AJAX Assignment</title> 
-    <meta charset="utf-8" /> 
+<html>
+  <head>
+    <title>AJAX Assignment</title>
+    <meta charset="utf-8" />
     <meta content='width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport' />
     <meta name="viewport" content="width=device-width" />
     <meta name="license" content="
         Copyright 2013 Abram Hindle
-        
+
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
         You may obtain a copy of the License at
-        
+
             http://www.apache.org/licenses/LICENSE-2.0
-        
+
         Unless required by applicable law or agreed to in writing, software
         distributed under the License is distributed on an "AS IS" BASIS,
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,9 +23,9 @@
     <script src="json2.js"></script>
     <!-- Jquery hotlink taken from Google https://developers.google.com/speed/libraries/#jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  </head> 
-  <body bgcolor="black" height="100%" width="100%"> 
-    <canvas id="c" width="100%" height="100%" style="-webkit-tap-highlight-color: transparent;"></canvas> 
+  </head>
+  <body bgcolor="black" height="100%" width="100%">
+    <canvas id="c" width="100%" height="100%" style="-webkit-tap-highlight-color: transparent;"></canvas>
     <script>
 var canvas = document.getElementById('c');
 var host = window.location.host;
@@ -47,7 +47,7 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
                     // and put data into callback
                     callback(JSON.parse(xhr.responseText));
                 }
-            } 
+            }
             catch(e) {
                 alert('Error: ' + e.name);
             }
@@ -67,15 +67,15 @@ world = {};
 //XXX: TODO Make this prettier!
 function drawCircle(context,entity) {
     with(context) {
-        beginPath();              
+        beginPath();
         lineWidth = 3;
         var x = entity["x"];
         var y = entity["y"];
         //moveTo(x,y);
         fillStyle = entity["colour"];
         strokeStyle = fillStyle;
-        arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 2.0 * Math.PI, false);  
-        stroke();                                
+        arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 2.0 * Math.PI, false);
+        stroke();
     }
 }
 
@@ -142,21 +142,20 @@ function getPosition(e) {
 	}
 }
 
-
 function addEntity(entity, data) {
     // Until receive serverside update, show clients input for illusion of responsiveness.
     world[entity] = data;
     //XXX: Send a XHTML Request that updates the entity you just modified!
-    
+
     console.log("hosting host var " + host);
 	console.log("entity:" + entity);
 	console.log("data:" + JSON.stringify(data));
-    
+
     // Receive the world from server.
     sendJSONXMLHTTPRequest('http://'+host, data, function(receivedWorld) {
         world = receivedWorld;
     });
-    
+
     drawNextFrame(); // (but should we? Perhaps only after we got world)
 }
 
@@ -167,14 +166,14 @@ function addEntityWithoutName(data) {
     addEntity(name,data);
 }
 
-// canvas + mouse/touch is complicated 
+// canvas + mouse/touch is complicated
 // I give you this because well the mouse/touch stuff is a total
 // pain to get right. This has some out of context bug too.
 mouse = (function() {
-    // Now this isn't the most popular way of doing OO in 
+    // Now this isn't the most popular way of doing OO in
     // Javascript, but it relies on lexical scope and I like it
     // This isn't 301 so I'm not totally bound to OO :)
-    var self;    
+    var self;
     self = {
         clicked: 0,
         // these are listener lists append to them
@@ -223,7 +222,7 @@ mouse = (function() {
             }
         },
         touchstart: function(e) {
-            self.lasttouch = e;                                         
+            self.lasttouch = e;
             return self.mousedown(e);
         },
 	touchend: function(e) {
@@ -241,10 +240,10 @@ mouse = (function() {
                     self.callListeners(self.mousedraggers,x,y,self.clicked,e);
 	        }
                 self.callListeners(self.mousemovers,x,y,self.clicked,e);
-            }            
+            }
 	},
 	touchmove: function(e) {
-            self.lasttouch = e;                                         
+            self.lasttouch = e;
             return self.mousemove(e);
 	},
 	// Install the mouse listeners
@@ -292,7 +291,7 @@ function update() {
         // No change means no need to update.
         if( world !== receivedWorld ) {
             world = receivedWorld;
-            drawNextFrame();   
+            drawNextFrame();
         }
     });
     drawFrame();
