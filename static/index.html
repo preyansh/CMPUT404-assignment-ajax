@@ -153,15 +153,15 @@ function addEntity(entity, data) {
     world[entity] = data;
 
     // Time latency
-    var d = new Date();
-    var t = d.getTime();
+    //var d = new Date();
+    //var t = d.getTime();
 
     //XXX: Send a XHTML Request that updates the entity you just modified!
     sendJSONXMLHTTPRequest('/entity/'+entity, data, function(received_entity) {
-        var d2 = new Date();
-        var t2 = d2.getTime();
-        console.log("server:"+entity)
-        console.log(entity +" took "+ ((t2-t))+"ms")
+        //var d2 = new Date();
+        //var t2 = d2.getTime();
+        //console.log("server:"+entity)
+        //console.log(entity +" took "+ ((t2-t))+"ms")
         world[entity] = received_entity;
     });
     drawNextFrame();
