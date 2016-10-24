@@ -33,7 +33,9 @@ var host = window.location.host;
 var context = canvas.getContext("2d");
 var W = canvas.width  = window.innerWidth-6;
 var H = canvas.height = window.innerHeight-50;
-
+// Time latency
+//d = new Date();
+//oldt = d.getTime();
 
 function sendJSONXMLHTTPRequest(url, objects, callback) {
     var xhr = new XMLHttpRequest();
@@ -41,6 +43,11 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
         if (xhr.readyState==4) {
             try {
                 if (xhr.status==200) {
+                    // Time latency                    
+                    //var d = new Date();
+                    //var t = d.getTime();
+                    //if(objects !== null)
+                    //    console.log(" took "+ ((t-oldt))+"ms");
                     //XXX: parse some JSON from the request!
                     //XXX: Pass the data to the callback!
                     if(callback !== null)
@@ -154,16 +161,10 @@ function addEntity(entity, data) {
 
     // Time latency
     //var d = new Date();
-    //var t = d.getTime();
+    //oldt = d.getTime();
 
     //XXX: Send a XHTML Request that updates the entity you just modified!
-    sendJSONXMLHTTPRequest('/entity/'+entity, data, function(received_entity) {
-        //var d2 = new Date();
-        //var t2 = d2.getTime();
-        //console.log("server:"+entity)
-        //console.log(entity +" took "+ ((t2-t))+"ms")
-        world[entity] = received_entity;
-    });
+    sendJSONXMLHTTPRequest('/entity/'+entity, data, null);
     drawNextFrame();
 }
 
@@ -290,7 +291,7 @@ function update() {
     //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
     sendJSONXMLHTTPRequest('/world', null, function(receivedWorld) {
         // No change means no need to update.
-        if( world !== receivedWorld ) {
+        if( world !== receivedWorld) {
             world = receivedWorld;
             drawNextFrame();
         }
